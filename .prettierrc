@@ -1,0 +1,6 @@
+{
+  "endOfLine": "auto",
+  "htmlWhitespaceSensitivity": "ignore",
+  "printWidth": 110,
+  "trailingComma": "all"
+}
