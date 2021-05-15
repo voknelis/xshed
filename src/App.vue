@@ -2,7 +2,7 @@
   <v-app>
     <Navigation />
 
-    <v-main>
+    <v-main class="mt-4 mx-2">
       <router-view />
     </v-main>
   </v-app>
@@ -20,3 +20,9 @@ export default Vue.extend({
   }),
 });
 </script>
+
+<style>
+html {
+  overflow-y: auto;
+}
+</style>
