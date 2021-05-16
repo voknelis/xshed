@@ -6,8 +6,6 @@ import rootModule from "./modules/root";
 
 Vue.use(Vuex);
 
-export const STORAGE_KEY = "xshed.storage";
-
 export const store = createStore(rootModule, { plugins });
 export const root = rootModule.context(store);
 

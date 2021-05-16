@@ -44,6 +44,7 @@ import CalendarRibbon from "@/components/home/CalendarRibbon.vue";
 import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
 import { roundTime } from "@/utils/roundTime";
 import { vuetifyTimestampToUnixTimestamp } from "@/utils/vuetifyTimestampToUnixTimestamp";
+import { root } from "@/store";
 
 type VCalendar = Vue & {
   title: string;
@@ -105,7 +106,7 @@ export default class Calendar extends Vue {
       : "-10px";
   }
   get events(): CalendarEventParsed[] {
-    const events: CalendarEventParsed[] = [];
+    const events = root.getters.events;
     if (this.view === "month") {
       return events;
     } else {

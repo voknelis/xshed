@@ -5,6 +5,8 @@
       :timestamp="timestamp"
       :event="event"
       :loading="loading"
+      :categories="categories"
+      :scopes="scopes"
       @close="close"
       @save="onEventSave"
     />
@@ -17,6 +19,7 @@ import { CalendarDaySlotScope } from "vuetify";
 import NewVisit from "@/components/NewVisit.vue";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { CalendarEvent } from "@/entities/CalendarEvent";
+import { root } from "@/store";
 
 @Component({
   components: { NewVisit },
@@ -29,6 +32,12 @@ export default class NewEventDialog extends Vue {
 
   get fullscreenModal(): boolean {
     return this.$vuetify.breakpoint.smAndDown;
+  }
+  get categories(): string[] {
+    return root.getters.categories;
+  }
+  get scopes(): string[] {
+    return root.getters.scopes;
   }
 
   open(param?: CalendarDaySlotScope | Partial<CalendarEventParsed>): void {
@@ -47,12 +56,12 @@ export default class NewEventDialog extends Vue {
     this.timestamp = undefined;
   }
 
-  async onEventSave(e?: Partial<CalendarEvent>): Promise<void> {
+  async onEventSave(e?: CalendarEvent): Promise<void> {
     if (!e) return;
 
     this.loading = true;
     try {
-      await this.$store.dispatch("addEvent", e);
+      await root.actions.addEvent(e);
       this.model = false;
     } catch (e) {
       console.error(e);

@@ -62,12 +62,13 @@
               <v-combobox
                 v-model="category"
                 :rules="[(v) => !!v || 'Category field is mandatory']"
+                :items="categories"
                 prepend-icon="mdi-tune-variant"
                 label="Category"
               ></v-combobox>
             </v-col>
             <v-col>
-              <v-combobox v-model="scope" prepend-icon="mdi-tune" label="Scope"></v-combobox>
+              <v-combobox v-model="scope" :items="scopes" prepend-icon="mdi-tune" label="Scope"></v-combobox>
             </v-col>
           </v-row>
 
@@ -123,6 +124,8 @@ export default class NewVisit extends Vue {
   /* Initial timestamp */
   @Prop({ required: false, type: Object }) timestamp?: CalendarDaySlotScope;
   @Prop({ required: false, type: Object }) event?: Partial<CalendarEventParsed>;
+  @Prop({ required: false, type: Array }) categories!: string[];
+  @Prop({ required: false, type: Array }) scopes!: string[];
   @Prop({ type: Boolean }) loading!: boolean;
   @Prop({ type: Boolean }) isAdmin!: boolean;
 
@@ -208,7 +211,7 @@ export default class NewVisit extends Vue {
   }
 
   @Emit()
-  save(): Partial<CalendarEvent> | void {
+  save(): CalendarEvent | void {
     if (!this.form.validate()) return;
 
     const startTime = this.allDay ? "00:00" : this.startTime;
@@ -218,10 +221,10 @@ export default class NewVisit extends Vue {
       Start: this.makeDateTime(this.startDate, startTime),
       End: this.makeDateTime(this.startDate, endTime),
       AllDay: this.allDay,
-      Category: this.category,
+      Category: this.category!,
       Scope: this.scope,
       Comment: this.comment,
-    } as Partial<CalendarEvent>;
+    };
   }
 
   getLocalISODate(): string {

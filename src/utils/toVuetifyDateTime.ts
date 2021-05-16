@@ -11,3 +11,8 @@ export function toVuetifyDateTime(d: Date): string {
   const shortTime = time.slice(0, 5); // cut of seconds
   return [date, shortTime].join(" ");
 }
+
+export function toLocalDate(d: Date): string {
+  const dateString = toLocalISODateTime(d);
+  return dateString.slice(0, 10);
+}

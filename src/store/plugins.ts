@@ -1,5 +1,5 @@
 import { createLogger, Store } from "vuex";
-import { STORAGE_KEY } from "@/store/index";
+import { STORAGE_KEY } from "@/store/localStorageKeys";
 import { RootState } from "@/store/modules/root/state";
 
 const localStoragePlugin: (store: Store<RootState>) => void = (store) => {
