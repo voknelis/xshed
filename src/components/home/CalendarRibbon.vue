@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, VModel, Vue } from "vue-property-decorator";
-import CalendarViewSwitcher from "@/partials/Home/CalendarViewSwitcher.vue";
+import CalendarViewSwitcher from "@/components/home/CalendarViewSwitcher.vue";
 import { CalendarView } from "@/entities/CalendarView";
 
 @Component({
