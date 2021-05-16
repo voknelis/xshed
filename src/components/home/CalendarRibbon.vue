@@ -11,7 +11,7 @@
               large
               class="mr-2"
               color="grey darken-2"
-              @click="openEventForm"
+              @click="openDialog"
             >
               <v-icon>mdi-calendar-plus</v-icon>
               <span class="hidden-sm-and-down ms-1">Add event</span>
@@ -79,8 +79,9 @@ export default class CalendarRibbon extends Vue {
     return;
   }
 
-  openEventForm() {
-    // TODO: call event form
+  @Emit()
+  openDialog() {
+    return;
   }
 }
 </script>

@@ -6,6 +6,7 @@
       @to-today="toToday"
       @next-timestamp="nextTimestamp"
       @prev-timestamp="prevTimestamp"
+      @open-dialog="openNewEventDialog()"
     />
 
     <v-calendar
@@ -18,7 +19,7 @@
       :events="events"
       locale="en-US"
       :style="{ 'user-select': [this.dragEvent ? 'none' : ''] }"
-      @click:interval="newVisitEventWithTime"
+      @click:interval="openNewEventDialog"
       @click:event="showEvent"
       @click:date="setViewDay"
       @mousedown:event="mouseDownExistEvent"
@@ -38,6 +39,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { CalendarDaySlotScope, CalendarTimestamp } from "vuetify";
 import { CalendarView } from "@/entities/CalendarView";
+import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import CalendarRibbon from "@/components/home/CalendarRibbon.vue";
 import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
 import { roundTime } from "@/utils/roundTime";
@@ -64,8 +66,13 @@ export default class Calendar extends Vue {
 
   roundMinutes = 15;
 
+  selectedEvent: CalendarEventParsed | null = null;
+  selectedElement: EventTarget | null = null;
+
   dragEvent = false;
-  draftEvent: any | null = null;
+  draftEvent: Partial<CalendarEventParsed> | null = null;
+
+  selectedOpen = false;
 
   get calendarInstance(): VCalendar {
     return this.$refs.calendar as VCalendar;
@@ -97,12 +104,12 @@ export default class Calendar extends Vue {
       ? this.calendarInstance.timeToY(this.calendarInstance.times.now) + "px"
       : "-10px";
   }
-  get events(): any[] {
-    const events = [];
-    if (this.type === "month") {
+  get events(): CalendarEventParsed[] {
+    const events: CalendarEventParsed[] = [];
+    if (this.view === "month") {
       return events;
     } else {
-      return this.dragEvent ? [...events, this.draftEvent] : events;
+      return this.dragEvent ? [...events, this.draftEvent as CalendarEventParsed] : events;
     }
   }
 
@@ -132,9 +139,6 @@ export default class Calendar extends Vue {
     this.calendarInstance.prev();
   }
 
-  newVisitEventWithTime(tms?: CalendarDaySlotScope) {
-    // TODO: call event form
-  }
   showEvent({ nativeEvent, event }: { nativeEvent: Event; event: any }): void {
     const open = () => {
       this.selectedEvent = event;
@@ -183,13 +187,17 @@ export default class Calendar extends Vue {
   endDraftEvent(): void {
     this.dragEvent = false;
     if (this.draftEvent) {
-      // TODO: call event form
+      this.openNewEventDialog(this.draftEvent);
       this.draftEvent = null;
     }
   }
   cancelDrag(): void {
     this.dragEvent = false;
     this.draftEvent = null;
+  }
+
+  openNewEventDialog(event?: Partial<CalendarEventParsed> | CalendarDaySlotScope) {
+    this.$dialogs.newEventDialog.open(event);
   }
 }
 </script>
