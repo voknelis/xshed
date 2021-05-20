@@ -1,25 +1,25 @@
 <template>
   <v-dialog v-model="model" :fullscreen="fullscreenModal" max-width="700px">
-    <EditVisit
+    <EditEvent
       v-if="model && event"
       :event="event"
       :loading="loading"
       :categories="categories"
       :scopes="scopes"
       @save="onEventUpdate"
-    ></EditVisit>
+    />
   </v-dialog>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import EditVisit from "@/components/EditVisit.vue";
+import EditEvent from "@/components/EditEvent.vue";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { root } from "@/store";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 
 @Component({
-  components: { EditVisit },
+  components: { EditEvent },
 })
 export default class EditEventDialog extends Vue {
   model = false;

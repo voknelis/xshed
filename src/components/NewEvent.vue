@@ -1,9 +1,9 @@
 <template>
   <v-card>
-    <v-card-title>Edit event</v-card-title>
+    <v-card-title>Create visit event</v-card-title>
     <v-card-text>
       <v-container>
-        <v-form v-model="formModel" ref="form">
+        <v-form v-model="formModel" ref="form" lazy-validation>
           <v-row>
             <v-col>
               <v-menu
@@ -91,38 +91,43 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="blue" text @click="closeDialog">Close</v-btn>
-      <v-btn color="primary" :disabled="!formModel" :loading="loading" @click="save">Submit</v-btn>
+      <v-btn color="primary" :disabled="!formModel" :loading="loading" @click="save">Create</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch, Emit, Prop } from "vue-property-decorator";
-import { CalendarEvent } from "@/entities/CalendarEvent";
+import { toLocalISODateTime } from "@/utils/toVuetifyDateTime";
+import { CalendarDaySlotScope } from "vuetify";
+import { addMinutes, getTimeStringRange } from "@/utils/getRangeTimeItems";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
-import { getTimeStringRange } from "@/utils/getRangeTimeItems";
+import { CalendarEvent } from "@/entities/CalendarEvent";
+import { uuidv4 } from "@/utils/uuidv4";
 
 type VForm = { validate: () => boolean };
 
 @Component
-export default class NewVisit extends Vue {
-  @Prop({ required: false, type: Object }) event!: CalendarEventParsed;
+export default class NewEvent extends Vue {
+  formModel = false;
+  menu = false;
+
+  startDate = this.getLocalISODate();
+  startDateFormatted = this.formatDate(this.getLocalISODate());
+  startTime = "";
+  endTime = "";
+  allDay = false;
+  category? = "";
+  scope? = "";
+  comment? = "";
+
+  /* Initial timestamp */
+  @Prop({ required: false, type: Object }) timestamp?: CalendarDaySlotScope;
+  @Prop({ required: false, type: Object }) event?: Partial<CalendarEventParsed>;
   @Prop({ required: false, type: Array }) categories!: string[];
   @Prop({ required: false, type: Array }) scopes!: string[];
   @Prop({ type: Boolean }) loading!: boolean;
   @Prop({ type: Boolean }) isAdmin!: boolean;
-
-  formModel = false;
-  menu = false;
-
-  startDate = this.getDateString(this.event.start);
-  startDateFormatted = this.formatDate(this.startDate);
-  startTime = this.getTimeString(this.event.start);
-  endTime = this.getTimeString(this.event.end || "");
-  allDay = this.event.allDay;
-  category = this.event.category || "";
-  scope = this.event.scope || "";
-  comment = this.event.comment || "";
 
   @Watch("startDate")
   startDateUpdate(): void {
@@ -132,7 +137,6 @@ export default class NewVisit extends Vue {
   get form(): VForm {
     return this.$refs.form as unknown as VForm;
   }
-
   get visitTimeItems(): string[] {
     const startHours = "7:00";
     const endHours = "20:00";
@@ -146,7 +150,6 @@ export default class NewVisit extends Vue {
     const [year, month, day] = date.split("-");
     return `${day}/${month}/${year}`;
   }
-
   parseDate(date: string | null): string {
     if (!date) return "";
 
@@ -154,12 +157,48 @@ export default class NewVisit extends Vue {
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   }
 
-  getDateString(d: string): string {
-    return d.substr(0, 10);
-  }
+  mounted(): void {
+    const currentDate = new Date();
 
-  getTimeString(d: string): string {
-    return d.substr(11, 5);
+    const toLocaleString = (n: number) => {
+      return n.toLocaleString("default", { minimumIntegerDigits: 2 });
+    };
+    const interval = 15;
+
+    if (this.timestamp) {
+      this.startDate = this.timestamp.date;
+
+      this.startTime = `${toLocaleString(this.timestamp.hour)}:00`;
+      const end = addMinutes(
+        new Date(`${this.startDate} ${toLocaleString(this.timestamp.hour)}:00`),
+        interval,
+      );
+      this.endTime = `${toLocaleString(end.getHours())}:${toLocaleString(end.getMinutes())}`;
+      return;
+    }
+    if (this.event) {
+      const [startDate, startTime] = this.event.start!.split(" ");
+      this.startDate = startDate;
+      this.startTime = startTime;
+
+      const [_, endTime] = this.event.end!.split(" ");
+      this.endTime = endTime;
+
+      this.category = this.event.category;
+      this.scope = this.event.scope;
+      this.comment = this.event.comment;
+
+      return;
+    }
+
+    this.startDate = currentDate.toISOString().substr(0, 10);
+
+    this.startTime = `${toLocaleString(currentDate.getHours())}:00`;
+    const end = addMinutes(
+      new Date(`${this.startDate} ${toLocaleString(currentDate.getHours())}:00`),
+      interval,
+    );
+    this.endTime = `${toLocaleString(end.getHours())}:${toLocaleString(end.getMinutes())}`;
   }
 
   makeDateTime(date: string, time: string): string {
@@ -178,14 +217,19 @@ export default class NewVisit extends Vue {
     const startTime = this.allDay ? "00:00" : this.startTime;
     const endTime = this.allDay ? "23:59" : this.endTime;
     return {
-      Id: this.event.id,
+      Id: uuidv4(),
       Start: this.makeDateTime(this.startDate, startTime),
       End: this.makeDateTime(this.startDate, endTime),
       AllDay: this.allDay,
-      Category: this.category,
+      Category: this.category!,
       Scope: this.scope,
       Comment: this.comment,
     };
+  }
+
+  getLocalISODate(): string {
+    const localISODate = toLocalISODateTime(new Date());
+    return localISODate.substr(0, 10);
   }
 }
 </script>
