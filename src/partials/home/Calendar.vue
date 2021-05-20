@@ -32,6 +32,18 @@
         <div class="v-current-time" :class="{ first: date === week[0].date }" :style="{ top: nowY }"></div>
       </template>
     </v-calendar>
+
+    <v-menu
+      v-model="selectedOpen"
+      :activator="selectedElement"
+      :close-on-content-click="false"
+      max-width="500px"
+      offset-x
+    >
+      <template v-if="selectedEvent">
+        <VisitEventMenuPreview :visit="selectedEvent" @close="closeSelectedEventMenu" />
+      </template>
+    </v-menu>
   </div>
 </template>
 
@@ -41,6 +53,7 @@ import { CalendarDaySlotScope, CalendarTimestamp } from "vuetify";
 import { CalendarView } from "@/entities/CalendarView";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import CalendarRibbon from "@/components/home/CalendarRibbon.vue";
+import VisitEventMenuPreview from "@/components/home/VisitEventMenuPreview.vue";
 import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
 import { roundTime } from "@/utils/roundTime";
 import { vuetifyTimestampToUnixTimestamp } from "@/utils/vuetifyTimestampToUnixTimestamp";
@@ -56,8 +69,9 @@ type VCalendar = Vue & {
   lastStart: CalendarTimestamp;
   lastEnd: CalendarTimestamp;
 };
+
 @Component({
-  components: { CalendarRibbon },
+  components: { CalendarRibbon, VisitEventMenuPreview },
 })
 export default class Calendar extends Vue {
   view: CalendarView = "day";
@@ -199,6 +213,10 @@ export default class Calendar extends Vue {
 
   openNewEventDialog(event?: Partial<CalendarEventParsed> | CalendarDaySlotScope) {
     this.$dialogs.newEventDialog.open(event);
+  }
+
+  closeSelectedEventMenu() {
+    this.selectedOpen = false;
   }
 }
 </script>
