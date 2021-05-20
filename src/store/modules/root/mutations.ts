@@ -11,9 +11,9 @@ export class RootMutations extends Mutations<RootState> {
     else events.push(event);
   }
 
-  removeEvent(event: CalendarEvent): void {
+  removeEvent(id: string): void {
     const events = this.state.events;
-    const index = events.findIndex((e) => e.Id === event.Id);
+    const index = events.findIndex((e) => e.Id === id);
     if (index !== -1) events.splice(index, 1);
   }
 }
