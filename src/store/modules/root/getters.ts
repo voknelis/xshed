@@ -18,7 +18,7 @@ export class RootGetters extends Getters<RootState> {
 
   get scopes(): string[] {
     const scopes = this.state.events.reduce((acc, e) => {
-      return acc.add(e.Category);
+      return acc.add(e.Scope);
     }, new Set<string>());
     return [...scopes.values()].filter(Boolean);
   }
