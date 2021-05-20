@@ -50,7 +50,7 @@ export default class VisitEventMenuPreview extends Vue {
   }
 
   openEditDialog(e: CalendarEventParsed): void {
-    this.$dialogs.editVisitDialog.open(e);
+    this.$dialogs.editEventDialog.open(e);
   }
 
   async deleteVisitEvent(e: CalendarEventParsed): Promise<void> {
