@@ -42,7 +42,7 @@ export default class VisitEventMenuPreview extends Vue {
   @Prop({ type: Object, required: true }) visit!: CalendarEventParsed;
 
   get getComment(): string {
-    return this.visit.comment ?? "The event comment was not provided";
+    return this.visit.comment || "The event comment was not provided";
   }
 
   getEventColor(event: CalendarEventParsed): string {
