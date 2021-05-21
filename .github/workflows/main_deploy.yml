@@ -11,24 +11,20 @@ jobs:
         node-version: [14.x]
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Install packages
-        run: npm install
+        run: npm ci
+
       - name: Build project
         run: npm run build
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-#        run: |
-#          git config --global user.email ${{ env.EMAIL }}
-#          git config --global user.name ${{ env.USERNAME }}
-#          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.USERNAME }}/xshed.git
-#          npm run deploy
-#        env:
-#          USERNAME: ${{ secrets.USERNAME }}
-#          EMAIL: ${{ secrets.EMAIL }}
