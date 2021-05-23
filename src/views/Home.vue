@@ -19,5 +19,6 @@ export default class Home extends Vue {}
   display: flex;
   flex-direction: column;
   height: calc(100vh - 64px);
+  overflow-x: auto;
 }
 </style>

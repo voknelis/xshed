@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column">
     <CalendarRibbon
       v-model="view"
       class="mb-2"
