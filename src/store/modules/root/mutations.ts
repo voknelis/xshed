@@ -25,4 +25,13 @@ export class RootMutations extends Mutations<RootState> {
   setSelectedProfile(id: string): void {
     this.state.selectedProfileId = id;
   }
+
+  resetState(): void {
+    this.state.profiles = [];
+    this.state.events = [];
+    this.state.selectedProfileId = "";
+  }
+  commitState(): void {
+    // special method to cause state saving to localStorage
+  }
 }

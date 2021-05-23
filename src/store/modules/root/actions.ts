@@ -31,4 +31,23 @@ export class RootActions extends Actions<RootState, RootGetters, RootMutations, 
     };
     this.commit("setProfile", profile);
   }
+
+  async cleanUpData(): Promise<void> {
+    this.commit("resetState");
+    localStorage.clear();
+  }
+
+  async importDataWithOverwrite(payload: Partial<RootState>): Promise<void> {
+    this.state.events = payload.events || [];
+    this.state.profiles = payload.profiles || [];
+    this.state.defaultProfile = payload.defaultProfile!;
+    this.state.selectedProfileId = payload.selectedProfileId || payload.defaultProfile!.Id;
+    this.commit("commitState");
+  }
+
+  async importData(payload: Partial<RootState>): Promise<void> {
+    this.state.events = [...this.state.events, ...(payload.events || [])];
+    this.state.profiles = [...this.state.profiles, ...(payload.profiles || [])];
+    this.commit("commitState");
+  }
 }
