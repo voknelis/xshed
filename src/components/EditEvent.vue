@@ -194,8 +194,8 @@ export default class EditEvent extends Vue {
   }
 
   @Emit()
-  save(): CalendarEvent | void {
-    if (!this.form.validate()) return;
+  save(): CalendarEvent | null {
+    if (!this.form.validate()) return null;
 
     const startTime = this.allDay ? "00:00" : this.startTime;
     const endTime = this.allDay ? "23:59" : this.endTime;
