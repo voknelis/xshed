@@ -7,6 +7,7 @@
       :loading="loading"
       :categories="categories"
       :scopes="scopes"
+      :profiles="profiles"
       @close="close"
       @save="onEventSave"
     />
@@ -20,6 +21,7 @@ import NewEvent from "@/components/NewEvent.vue";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { root } from "@/store";
+import { UserProfile } from "@/entities/UserProfile";
 
 @Component({
   components: { NewEvent },
@@ -38,6 +40,9 @@ export default class NewEventDialog extends Vue {
   }
   get scopes(): string[] {
     return root.getters.scopes;
+  }
+  get profiles(): UserProfile[] {
+    return root.state.profiles;
   }
 
   open(param?: CalendarDaySlotScope | Partial<CalendarEventParsed>): void {

@@ -13,7 +13,7 @@ const defaultProfile: UserProfile = {
 
 export class RootState {
   events: CalendarEvent[] = storage.events || [];
-  defaultProfile: UserProfile = defaultProfile;
+  defaultProfile: UserProfile = storage.defaultProfile || defaultProfile;
   profiles: UserProfile[] = storage.profiles || [defaultProfile];
   selectedProfileId: string = storage.selectedProfileId || defaultProfile.Id;
 }

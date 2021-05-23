@@ -74,6 +74,19 @@
 
           <v-row>
             <v-col>
+              <v-autocomplete
+                v-model="profile"
+                :items="profiles"
+                item-text="Title"
+                return-object
+                prepend-icon="mdi-account"
+                label="Profile"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
               <v-textarea
                 v-model="comment"
                 label="Comment"
@@ -100,7 +113,9 @@
 import { Component, Vue, Watch, Emit, Prop } from "vue-property-decorator";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
+import { UserProfile } from "@/entities/UserProfile";
 import { getTimeStringRange } from "@/utils/getRangeTimeItems";
+import { root } from "@/store";
 
 type VForm = { validate: () => boolean };
 
@@ -109,6 +124,7 @@ export default class EditEvent extends Vue {
   @Prop({ required: false, type: Object }) event!: CalendarEventParsed;
   @Prop({ required: false, type: Array }) categories!: string[];
   @Prop({ required: false, type: Array }) scopes!: string[];
+  @Prop({ required: false, type: Array }) profiles!: UserProfile[];
   @Prop({ type: Boolean }) loading!: boolean;
   @Prop({ type: Boolean }) isAdmin!: boolean;
 
@@ -120,9 +136,10 @@ export default class EditEvent extends Vue {
   startTime = this.getTimeString(this.event.start);
   endTime = this.getTimeString(this.event.end || "");
   allDay = this.event.allDay;
-  category = this.event.category || "";
+  category = this.event.type || "";
   scope = this.event.scope || "";
   comment = this.event.comment || "";
+  profile: UserProfile = root.getters.userProfileByTitle(this.event.category);
 
   @Watch("startDate")
   startDateUpdate(): void {
@@ -185,6 +202,7 @@ export default class EditEvent extends Vue {
       Category: this.category,
       Scope: this.scope,
       Comment: this.comment,
+      ProfileId: this.profile?.Id,
     };
   }
 }

@@ -6,4 +6,5 @@ export interface CalendarEvent {
   Category: string;
   Scope?: string;
   Comment?: string;
+  ProfileId: string;
 }

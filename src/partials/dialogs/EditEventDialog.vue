@@ -6,6 +6,7 @@
       :loading="loading"
       :categories="categories"
       :scopes="scopes"
+      :profiles="profiles"
       @save="onEventUpdate"
     />
   </v-dialog>
@@ -17,6 +18,7 @@ import EditEvent from "@/components/EditEvent.vue";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { root } from "@/store";
 import { CalendarEvent } from "@/entities/CalendarEvent";
+import { UserProfile } from "@/entities/UserProfile";
 
 @Component({
   components: { EditEvent },
@@ -34,6 +36,9 @@ export default class EditEventDialog extends Vue {
   }
   get scopes(): string[] {
     return root.getters.scopes;
+  }
+  get profiles(): UserProfile[] {
+    return root.state.profiles;
   }
 
   open(event: CalendarEventParsed): void {

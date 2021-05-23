@@ -9,7 +9,9 @@ import { UserProfile } from "@/entities/UserProfile";
 
 export class RootActions extends Actions<RootState, RootGetters, RootMutations, RootActions> {
   async addEvent(payload: CalendarEvent): Promise<void> {
-    this.commit("setEvent", payload);
+    const profileId = payload.ProfileId || this.getters.userProfile.Id;
+    const event: CalendarEvent = { ...payload, ProfileId: profileId };
+    this.commit("setEvent", event);
   }
 
   async updateEvent(payload: CalendarEvent): Promise<void> {

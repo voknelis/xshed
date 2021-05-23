@@ -14,6 +14,9 @@
       v-model="currentDate"
       ref="calendar"
       :type="view"
+      :categories="userProfileCategories"
+      category-text="Title"
+      category-show-all
       :first-time="'7:00'"
       :interval-count="14"
       :weekdays="weekdays"
@@ -27,6 +30,9 @@
       @mousedown:time="createDraftEvent"
       @mousemove:time="updateDraftEvent"
       @mouseup:time="endDraftEvent"
+      @mousedown:time-category="createDraftEvent"
+      @mousemove:time-category="updateDraftEvent"
+      @mouseup:time-category="endDraftEvent"
       @mouseleave.native="cancelDrag"
     >
       <template #day-body="{ date, week }">
@@ -53,6 +59,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { CalendarDaySlotScope, CalendarTimestamp } from "vuetify";
 import { CalendarView } from "@/entities/CalendarView";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
+import { UserProfile } from "@/entities/UserProfile";
 import CalendarRibbon from "@/components/home/CalendarRibbon.vue";
 import VisitEventMenuPreview from "@/components/home/VisitEventMenuPreview.vue";
 import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
@@ -128,6 +135,9 @@ export default class Calendar extends Vue {
       return this.dragEvent ? [...events, this.draftEvent as CalendarEventParsed] : events;
     }
   }
+  get userProfileCategories(): UserProfile[] {
+    return root.state.profiles.slice();
+  }
 
   mounted(): void {
     // calendar current date string
@@ -155,7 +165,8 @@ export default class Calendar extends Vue {
     this.calendarInstance.prev();
   }
 
-  showEvent({ nativeEvent, event }: { nativeEvent: Event; event: any }): void {
+  showEvent(e: { nativeEvent: Event; event: any }): void {
+    const { nativeEvent, event } = e;
     const open = () => {
       this.selectedEvent = event;
       this.selectedElement = nativeEvent.target;
@@ -179,10 +190,13 @@ export default class Calendar extends Vue {
       const time = vuetifyTimestampToUnixTimestamp(tms);
       const timeRounded = new Date(roundTime(time, { roundTo: this.roundMinutes }));
 
+      const profile: UserProfile = tms.category ? (tms.category as UserProfile) : root.getters.userProfile;
+
       this.dragEvent = true;
       this.draftEvent = {
         name: `#Draft event`,
         start: toVuetifyDateTime(timeRounded),
+        category: profile.Title,
       };
       this.updateDraftEvent(tms);
     }

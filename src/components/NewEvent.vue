@@ -74,6 +74,19 @@
 
           <v-row>
             <v-col>
+              <v-autocomplete
+                v-model="profile"
+                :items="profiles"
+                item-text="Title"
+                return-object
+                prepend-icon="mdi-account"
+                label="Profile"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
               <v-textarea
                 v-model="comment"
                 label="Comment"
@@ -103,7 +116,9 @@ import { CalendarDaySlotScope } from "vuetify";
 import { addMinutes, getTimeStringRange } from "@/utils/getRangeTimeItems";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { CalendarEvent } from "@/entities/CalendarEvent";
+import { UserProfile } from "@/entities/UserProfile";
 import { uuidv4 } from "@/utils/uuidv4";
+import { root } from "@/store";
 
 type VForm = { validate: () => boolean };
 
@@ -117,6 +132,7 @@ export default class NewEvent extends Vue {
   startTime = "";
   endTime = "";
   allDay = false;
+  profile: UserProfile = root.getters.userProfile;
   category? = "";
   scope? = "";
   comment? = "";
@@ -126,6 +142,7 @@ export default class NewEvent extends Vue {
   @Prop({ required: false, type: Object }) event?: Partial<CalendarEventParsed>;
   @Prop({ required: false, type: Array }) categories!: string[];
   @Prop({ required: false, type: Array }) scopes!: string[];
+  @Prop({ required: false, type: Array }) profiles!: UserProfile[];
   @Prop({ type: Boolean }) loading!: boolean;
   @Prop({ type: Boolean }) isAdmin!: boolean;
 
@@ -184,9 +201,13 @@ export default class NewEvent extends Vue {
       const [_, endTime] = this.event.end!.split(" ");
       this.endTime = endTime;
 
-      this.category = this.event.category;
+      this.category = this.event.type;
       this.scope = this.event.scope;
       this.comment = this.event.comment;
+
+      if (this.event.category) {
+        this.profile = root.getters.userProfileByTitle(this.event.category);
+      }
 
       return;
     }
@@ -224,6 +245,7 @@ export default class NewEvent extends Vue {
       Category: this.category!,
       Scope: this.scope,
       Comment: this.comment,
+      ProfileId: this.profile?.Id,
     };
   }
 

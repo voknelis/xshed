@@ -18,6 +18,10 @@
       <span class="hidden-md-and-down me-1">Month</span>
       <v-icon>mdi-calendar-month</v-icon>
     </v-btn>
+    <v-btn value="category" text color="grey darken-2">
+      <span class="hidden-md-and-down me-1">Profiles</span>
+      <v-icon>mdi-select-compare</v-icon>
+    </v-btn>
   </v-btn-toggle>
 </template>
 

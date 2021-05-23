@@ -7,7 +7,8 @@ export interface CalendarDefaultParsedEvent {
 
 export interface CalendarEventParsed extends CalendarDefaultParsedEvent {
   id: string;
-  category: string;
+  type: string;
   scope?: string;
   comment?: string;
+  category: string;
 }

@@ -4,6 +4,7 @@ import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
 import { toLocalDate, toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
+import { root } from "@/store";
 
 export class RootGetters extends Getters<RootState> {
   get events(): CalendarEventParsed[] {
@@ -26,13 +27,24 @@ export class RootGetters extends Getters<RootState> {
 
   get userProfile(): UserProfile {
     const id = this.state.selectedProfileId;
-    return this.state.profiles.find((p) => p.Id === id) || this.state.defaultProfile;
+    return this.getters.userProfileById(id);
+  }
+  get userProfileById(): (id: string) => UserProfile {
+    return (id: string) => {
+      return this.state.profiles.find((p) => p.Id === id) || this.state.defaultProfile;
+    };
+  }
+  get userProfileByTitle(): (title: string) => UserProfile {
+    return (title: string) => {
+      return this.state.profiles.find((p) => p.Title === title) || this.state.defaultProfile;
+    };
   }
 }
 
 export const mapToVuetifyEvent = (e: CalendarEvent): CalendarEventParsed => {
   const localStartDate = e.AllDay ? toLocalDate(new Date(e.Start)) : toVuetifyDateTime(new Date(e.Start));
   const localEndDate = e.AllDay ? toLocalDate(new Date(e.End)) : toVuetifyDateTime(new Date(e.End));
+  const profile = root.getters.userProfileById(e.ProfileId);
 
   return {
     id: e.Id,
@@ -40,8 +52,9 @@ export const mapToVuetifyEvent = (e: CalendarEvent): CalendarEventParsed => {
     start: localStartDate,
     end: localEndDate,
     allDay: !!e.AllDay,
-    category: e.Category,
+    type: e.Category,
     scope: e.Scope,
     comment: e.Comment,
+    category: profile.Title,
   };
 };
