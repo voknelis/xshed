@@ -14,14 +14,19 @@
       <v-btn class="btn-black" icon tile exact :to="{ name: 'Settings' }">
         <v-icon>mdi-cog</v-icon>
       </v-btn>
+
+      <UserAccounts />
     </div>
   </v-app-bar>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import UserAccounts from "@/partials/navigation/UserAccounts.vue";
 
-@Component
+@Component({
+  components: { UserAccounts },
+})
 export default class Navigation extends Vue {
   toggleAppTheme() {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;

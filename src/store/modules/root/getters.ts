@@ -2,6 +2,7 @@ import { Getters } from "vuex-smart-module";
 import { RootState } from "./state";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
+import { UserProfile } from "@/entities/UserProfile";
 import { toLocalDate, toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
 
 export class RootGetters extends Getters<RootState> {
@@ -21,6 +22,11 @@ export class RootGetters extends Getters<RootState> {
       return acc.add(e.Scope || "");
     }, new Set<string>());
     return [...scopes.values()].filter(Boolean);
+  }
+
+  get userProfile(): UserProfile {
+    const id = this.state.selectedProfileId;
+    return this.state.profiles.find((p) => p.Id === id) || this.state.defaultProfile;
   }
 }
 
