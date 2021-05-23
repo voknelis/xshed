@@ -2,6 +2,7 @@
   <div>
     <CalendarRibbon
       v-model="view"
+      class="mb-2"
       :date="calendarTitle"
       @to-today="toToday"
       @next-timestamp="nextTimestamp"
