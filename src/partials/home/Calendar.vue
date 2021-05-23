@@ -144,7 +144,7 @@ export default class Calendar extends Vue {
   /**
    * Switch to day view
    */
-  setViewDay({ date }: { date: string }) {
+  setViewDay({ date }: { date: string }): void {
     this.currentDate = date;
     this.view = "day";
   }
@@ -212,11 +212,11 @@ export default class Calendar extends Vue {
     this.draftEvent = null;
   }
 
-  openNewEventDialog(event?: Partial<CalendarEventParsed> | CalendarDaySlotScope) {
+  openNewEventDialog(event?: Partial<CalendarEventParsed> | CalendarDaySlotScope): void {
     this.$dialogs.newEventDialog.open(event);
   }
 
-  closeSelectedEventMenu() {
+  closeSelectedEventMenu(): void {
     this.selectedOpen = false;
   }
 }

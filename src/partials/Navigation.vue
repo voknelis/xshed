@@ -28,7 +28,7 @@ import UserAccounts from "@/partials/navigation/UserAccounts.vue";
   components: { UserAccounts },
 })
 export default class Navigation extends Vue {
-  toggleAppTheme() {
+  toggleAppTheme(): void {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     const value = this.$vuetify.theme.dark ? "dark" : "light";
     localStorage.setItem("xshed.app-theme", value);

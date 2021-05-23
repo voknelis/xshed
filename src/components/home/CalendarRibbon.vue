@@ -72,22 +72,22 @@ export default class CalendarRibbon extends Vue {
   @Prop() date?: string;
 
   @Emit()
-  nextTimestamp() {
+  nextTimestamp(): void {
     return;
   }
 
   @Emit()
-  prevTimestamp() {
+  prevTimestamp(): void {
     return;
   }
 
   @Emit()
-  toToday() {
+  toToday(): void {
     return;
   }
 
   @Emit()
-  openDialog() {
+  openDialog(): void {
     return;
   }
 }
