@@ -50,7 +50,7 @@
               <v-autocomplete
                 v-model="endTime"
                 :items="visitTimeItems"
-                :rules="[(v) => v > startTime || 'End time should be greater than start time']"
+                :rules="[(v) => v > startTime || 'End time should be greater than Start time']"
                 prepend-icon="mdi-clock-time-five-outline"
                 label="End time"
               ></v-autocomplete>
@@ -61,7 +61,7 @@
             <v-col>
               <v-combobox
                 v-model="category"
-                :rules="[(v) => !!v || 'Category field is mandatory']"
+                :rules="validation.category"
                 :items="categories"
                 prepend-icon="mdi-tune-variant"
                 label="Category"
@@ -117,6 +117,7 @@ import { addMinutes, getTimeStringRange } from "@/utils/getRangeTimeItems";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { UserProfile } from "@/entities/UserProfile";
+import { requiredRule } from "@/utils/formValidationRules";
 import { uuidv4 } from "@/utils/uuidv4";
 import { root } from "@/store";
 
@@ -136,6 +137,10 @@ export default class NewEvent extends Vue {
   category? = "";
   scope? = "";
   comment? = "";
+
+  validation = {
+    category: [requiredRule("Category")],
+  };
 
   /* Initial timestamp */
   @Prop({ required: false, type: Object }) timestamp?: CalendarDaySlotScope;
