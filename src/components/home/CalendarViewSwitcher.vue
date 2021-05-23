@@ -28,13 +28,24 @@
 <script lang="ts">
 import { Component, VModel, Vue } from "vue-property-decorator";
 import { CalendarView } from "@/entities/CalendarView";
+import { CALENDAR_VIEW_KEY } from "@/store/localStorageKeys";
+
+const calendarViewKey = CALENDAR_VIEW_KEY;
 
 @Component
 export default class CalendarViewSwitcher extends Vue {
   @VModel() view!: CalendarView;
 
-  storeCalendarType(type: CalendarView) {
-    localStorage.setItem("xshed.calendar-view", type);
+  created(): void {
+    this.restoreCalendarType();
+  }
+
+  storeCalendarType(type: CalendarView): void {
+    localStorage.setItem(calendarViewKey, type);
+  }
+
+  restoreCalendarType(): void {
+    this.view = (localStorage.getItem(calendarViewKey) as CalendarView) || "day";
   }
 }
 </script>
