@@ -1,7 +1,7 @@
 <template>
   <div class="calendar-ribbon">
     <v-sheet>
-      <v-row>
+      <v-row no-gutters>
         <v-col class="d-flex" cols="12" sm>
           <v-tooltip bottom open-delay="900">
             <template v-slot:activator="{ on, attrs }">
