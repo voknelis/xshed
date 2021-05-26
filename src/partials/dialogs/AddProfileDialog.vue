@@ -48,14 +48,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-// @ts-ignore
-import { fromHex } from "vuetify/es5/components/VColorPicker/util";
-// @ts-ignore
-import { contrastRatio } from "vuetify/es5/util/colorUtils";
 import { root } from "@/store";
 import { UserProfile } from "@/entities/UserProfile";
-
-const white = fromHex("#FFFFFF").rgba;
+import { isColorWhite } from "@/utils/isColorWhite";
 
 @Component
 export default class AddProfileDialog extends Vue {
@@ -64,7 +59,7 @@ export default class AddProfileDialog extends Vue {
   profile = this.getDefaultProfile();
 
   get isBackgroundWhite(): boolean {
-    return contrastRatio(fromHex(this.profile.Color).rgba, white) > 2;
+    return isColorWhite(this.profile.Color);
   }
 
   open(): void {
