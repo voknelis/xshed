@@ -110,16 +110,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, Emit, Prop } from "vue-property-decorator";
-import { toLocalISODateTime } from "@/utils/toVuetifyDateTime";
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { CalendarDaySlotScope } from "vuetify";
-import { addMinutes, getTimeStringRange } from "@/utils/getRangeTimeItems";
-import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { CalendarEvent } from "@/entities/CalendarEvent";
+import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
-import { requiredRule } from "@/utils/formValidationRules";
-import { uuidv4 } from "@/utils/uuidv4";
 import { root } from "@/store";
+import { requiredRule } from "@/utils/formValidationRules";
+import { addMinutes, getTimeStringRange } from "@/utils/getRangeTimeItems";
+import { toLocalISODateTime } from "@/utils/toVuetifyDateTime";
+import { uuidv4 } from "@/utils/uuidv4";
 
 type VForm = { validate: () => boolean };
 
@@ -159,6 +159,7 @@ export default class NewEvent extends Vue {
   get form(): VForm {
     return this.$refs.form as unknown as VForm;
   }
+
   get visitTimeItems(): string[] {
     const startHours = "7:00";
     const endHours = "20:00";
@@ -172,6 +173,7 @@ export default class NewEvent extends Vue {
     const [year, month, day] = date.split("-");
     return `${day}/${month}/${year}`;
   }
+
   parseDate(date: string | null): string {
     if (!date) return "";
 

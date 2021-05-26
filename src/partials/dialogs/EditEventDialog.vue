@@ -16,10 +16,10 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import EditEvent from "@/components/EditEvent.vue";
-import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
-import { root } from "@/store";
 import { CalendarEvent } from "@/entities/CalendarEvent";
+import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
+import { root } from "@/store";
 
 @Component({
   components: { EditEvent },
@@ -32,12 +32,15 @@ export default class EditEventDialog extends Vue {
   get fullscreenModal(): boolean {
     return this.$vuetify.breakpoint.smAndDown;
   }
+
   get categories(): string[] {
     return root.getters.categories;
   }
+
   get scopes(): string[] {
     return root.getters.scopes;
   }
+
   get profiles(): UserProfile[] {
     return root.state.profiles;
   }

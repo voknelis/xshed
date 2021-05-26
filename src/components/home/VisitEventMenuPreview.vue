@@ -1,6 +1,6 @@
 <template>
-  <v-card min-width="350px" flat>
-    <v-toolbar :color="getEventColor(visit)" :class="getTextColorClass">
+  <v-card flat min-width="350px">
+    <v-toolbar :class="getTextColorClass" :color="getEventColor">
       <v-toolbar-title class="ml-3" v-text="visit.name"></v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -20,11 +20,11 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-btn elevation="0" color="error" @click="deleteVisitEvent(visit)">
+      <v-btn color="error" elevation="0" @click="deleteVisitEvent(visit)">
         <v-icon class="mr-2">mdi-delete</v-icon>
         Delete
       </v-btn>
-      <v-btn elevation="0" color="primary" @click="openEditDialog(visit)">
+      <v-btn color="primary" elevation="0" @click="openEditDialog(visit)">
         <v-icon class="mr-2">mdi-pencil</v-icon>
         Edit
       </v-btn>
@@ -36,8 +36,8 @@
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { root } from "@/store";
-import { stringToHexColor } from "@/utils/stringToHexColor";
 import { isColorWhite } from "@/utils/isColorWhite";
+import { stringToHexColor } from "@/utils/stringToHexColor";
 
 @Component
 export default class VisitEventMenuPreview extends Vue {

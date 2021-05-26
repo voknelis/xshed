@@ -110,13 +110,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, Emit, Prop } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
-import { getTimeStringRange } from "@/utils/getRangeTimeItems";
 import { root } from "@/store";
 import { requiredRule } from "@/utils/formValidationRules";
+import { getTimeStringRange } from "@/utils/getRangeTimeItems";
 
 type VForm = { validate: () => boolean };
 

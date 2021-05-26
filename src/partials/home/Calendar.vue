@@ -58,16 +58,16 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { CalendarDaySlotScope, CalendarTimestamp } from "vuetify";
-import { CalendarView } from "@/entities/CalendarView";
-import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
-import { UserProfile } from "@/entities/UserProfile";
 import CalendarRibbon from "@/components/home/CalendarRibbon.vue";
 import VisitEventMenuPreview from "@/components/home/VisitEventMenuPreview.vue";
-import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
-import { roundTime } from "@/utils/roundTime";
-import { vuetifyTimestampToUnixTimestamp } from "@/utils/vuetifyTimestampToUnixTimestamp";
+import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
+import { CalendarView } from "@/entities/CalendarView";
+import { UserProfile } from "@/entities/UserProfile";
 import { root } from "@/store";
+import { roundTime } from "@/utils/roundTime";
 import { stringToHexColor } from "@/utils/stringToHexColor";
+import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
+import { vuetifyTimestampToUnixTimestamp } from "@/utils/vuetifyTimestampToUnixTimestamp";
 
 type VCalendar = Vue & {
   title: string;
@@ -102,6 +102,7 @@ export default class Calendar extends Vue {
   get calendarInstance(): VCalendar {
     return this.$refs.calendar as VCalendar;
   }
+
   get calendarTitle(): string {
     if (!this.calendarReady) {
       return "";
@@ -124,11 +125,13 @@ export default class Calendar extends Vue {
     }
     return default_;
   }
+
   get nowY(): string {
     return this.calendarReady
       ? this.calendarInstance.timeToY(this.calendarInstance.times.now) + "px"
       : "-10px";
   }
+
   get events(): CalendarEventParsed[] {
     const events = root.getters.events;
     if (this.view === "month") {
@@ -137,6 +140,7 @@ export default class Calendar extends Vue {
       return this.dragEvent ? [...events, this.draftEvent as CalendarEventParsed] : events;
     }
   }
+
   get userProfileCategories(): UserProfile[] {
     return root.state.profiles.slice();
   }
@@ -153,6 +157,7 @@ export default class Calendar extends Vue {
   toToday(): void {
     this.currentDate = "";
   }
+
   /**
    * Switch to day view
    */
@@ -160,9 +165,11 @@ export default class Calendar extends Vue {
     this.currentDate = date;
     this.view = "day";
   }
+
   nextTimestamp(): void {
     this.calendarInstance.next();
   }
+
   prevTimestamp(): void {
     this.calendarInstance.prev();
   }
@@ -188,9 +195,11 @@ export default class Calendar extends Vue {
       open();
     }
   }
+
   mouseDownExistEvent({ nativeEvent }: { nativeEvent: Event }): void {
     nativeEvent.stopPropagation();
   }
+
   createDraftEvent(tms: CalendarDaySlotScope): void {
     if (!this.dragEvent && this.draftEvent === null) {
       const time = vuetifyTimestampToUnixTimestamp(tms);
@@ -207,6 +216,7 @@ export default class Calendar extends Vue {
       this.updateDraftEvent(tms);
     }
   }
+
   updateDraftEvent(tms: CalendarDaySlotScope): void {
     if (this.dragEvent && this.draftEvent !== null) {
       const time = vuetifyTimestampToUnixTimestamp(tms);
@@ -220,6 +230,7 @@ export default class Calendar extends Vue {
       this.draftEvent = { ...this.draftEvent, end: toVuetifyDateTime(startTime) };
     }
   }
+
   endDraftEvent(): void {
     this.dragEvent = false;
     if (this.draftEvent) {
@@ -227,6 +238,7 @@ export default class Calendar extends Vue {
       this.draftEvent = null;
     }
   }
+
   cancelDrag(): void {
     this.dragEvent = false;
     this.draftEvent = null;

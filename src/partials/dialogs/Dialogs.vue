@@ -11,8 +11,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import AddProfileDialog from "./AddProfileDialog.vue";
 import ConfirmDialog from "./ConfirmDialog.vue";
-import NewEventDialog from "./NewEventDialog.vue";
 import EditEventDialog from "./EditEventDialog.vue";
+import NewEventDialog from "./NewEventDialog.vue";
 
 @Component({
   components: { AddProfileDialog, ConfirmDialog, NewEventDialog, EditEventDialog },

@@ -35,8 +35,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { UserProfile } from "@/entities/UserProfile";
-import { getUserInitials } from "@/utils/getUserInitials";
 import { root } from "@/store";
+import { getUserInitials } from "@/utils/getUserInitials";
 
 @Component
 export default class UserAccounts extends Vue {

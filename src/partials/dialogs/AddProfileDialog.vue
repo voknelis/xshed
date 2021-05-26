@@ -48,8 +48,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { root } from "@/store";
 import { UserProfile } from "@/entities/UserProfile";
+import { root } from "@/store";
 import { isColorWhite } from "@/utils/isColorWhite";
 
 @Component
@@ -94,6 +94,7 @@ export default class AddProfileDialog extends Vue {
   justify-content: center;
   height: 150px;
 }
+
 .default-avatar {
   position: absolute;
   bottom: -40px;
@@ -107,6 +108,7 @@ export default class AddProfileDialog extends Vue {
   .color-picker {
     max-width: 400px !important;
   }
+
   .v-color-picker__color {
     height: 45px;
     max-height: 45px;

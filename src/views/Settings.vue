@@ -7,8 +7,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import SettingsSessionManagement from "@/partials/settings/SettingsSessionManagement.vue";
 import SettingsDataManagement from "@/partials/settings/SettingsDataManagement.vue";
+import SettingsSessionManagement from "@/partials/settings/SettingsSessionManagement.vue";
 
 @Component({
   components: { SettingsDataManagement, SettingsSessionManagement },

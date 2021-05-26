@@ -18,10 +18,10 @@
 import { Component, Vue } from "vue-property-decorator";
 import { CalendarDaySlotScope } from "vuetify";
 import NewEvent from "@/components/NewEvent.vue";
-import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { CalendarEvent } from "@/entities/CalendarEvent";
-import { root } from "@/store";
+import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
+import { root } from "@/store";
 
 @Component({
   components: { NewEvent },
@@ -35,12 +35,15 @@ export default class NewEventDialog extends Vue {
   get fullscreenModal(): boolean {
     return this.$vuetify.breakpoint.smAndDown;
   }
+
   get categories(): string[] {
     return root.getters.categories;
   }
+
   get scopes(): string[] {
     return root.getters.scopes;
   }
+
   get profiles(): UserProfile[] {
     return root.state.profiles;
   }

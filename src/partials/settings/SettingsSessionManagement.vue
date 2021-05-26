@@ -34,8 +34,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import { saveAs } from "file-saver";
+import { Component, Vue } from "vue-property-decorator";
 import { root } from "@/store";
 
 @Component
@@ -76,10 +76,12 @@ export default class SettingsSessionManagement extends Vue {
     await root.actions.importDataWithOverwrite(this.importData_);
     this.dialog = false;
   }
+
   async mergeData(): Promise<void> {
     await root.actions.importData(this.importData_);
     this.dialog = false;
   }
+
   cancelImport(): void {
     this.importData_ = null;
     this.dialog = false;
