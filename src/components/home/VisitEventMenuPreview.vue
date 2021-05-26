@@ -47,17 +47,17 @@ export default class VisitEventMenuPreview extends Vue {
     return this.visit.comment || "The event comment was not provided";
   }
 
-  getEventColor(event?: CalendarEventParsed): string {
-    return event ? stringToHexColor(event.type) : "#222";
+  get getEventColor(): string {
+    return this.visit ? stringToHexColor(this.visit.type) : "#222";
   }
 
   get getTextColorClass(): string {
-    const color = isColorWhite(this.getEventColor(this.visit)) ? "white" : "black";
+    const color = isColorWhite(this.getEventColor) ? "white" : "black";
     return `${color}--text`;
   }
 
   get isBackgroundWhite(): boolean {
-    return isColorWhite(this.getEventColor(this.visit));
+    return isColorWhite(this.getEventColor);
   }
 
   openEditDialog(e: CalendarEventParsed): void {
