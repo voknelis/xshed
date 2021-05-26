@@ -1,11 +1,11 @@
 <template>
   <v-card min-width="350px" flat>
-    <v-toolbar :color="getEventColor(visit)" dark>
-      <v-toolbar-title class="ml-3" v-html="visit.name"></v-toolbar-title>
+    <v-toolbar :color="getEventColor(visit)" :class="getTextColorClass">
+      <v-toolbar-title class="ml-3" v-text="visit.name"></v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click="close">
+      <v-btn :dark="isBackgroundWhite" icon @click="close">
         <v-icon>mdi-window-close</v-icon>
       </v-btn>
     </v-toolbar>
@@ -36,6 +36,8 @@
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { root } from "@/store";
+import { stringToHexColor } from "@/utils/stringToHexColor";
+import { isColorWhite } from "@/utils/isColorWhite";
 
 @Component
 export default class VisitEventMenuPreview extends Vue {
@@ -45,8 +47,17 @@ export default class VisitEventMenuPreview extends Vue {
     return this.visit.comment || "The event comment was not provided";
   }
 
-  getEventColor(event: CalendarEventParsed): string {
-    return "#000";
+  getEventColor(event?: CalendarEventParsed): string {
+    return event ? stringToHexColor(event.type) : "#222";
+  }
+
+  get getTextColorClass(): string {
+    const color = isColorWhite(this.getEventColor(this.visit)) ? "white" : "black";
+    return `${color}--text`;
+  }
+
+  get isBackgroundWhite(): boolean {
+    return isColorWhite(this.getEventColor(this.visit));
   }
 
   openEditDialog(e: CalendarEventParsed): void {

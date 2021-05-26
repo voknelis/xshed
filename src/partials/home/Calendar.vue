@@ -21,6 +21,7 @@
       :interval-count="14"
       :weekdays="weekdays"
       :events="events"
+      :event-color="getEventColor"
       locale="en-US"
       :style="{ 'user-select': [this.dragEvent ? 'none' : ''] }"
       @click:interval="openNewEventDialog"
@@ -66,6 +67,7 @@ import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
 import { roundTime } from "@/utils/roundTime";
 import { vuetifyTimestampToUnixTimestamp } from "@/utils/vuetifyTimestampToUnixTimestamp";
 import { root } from "@/store";
+import { stringToHexColor } from "@/utils/stringToHexColor";
 
 type VCalendar = Vue & {
   title: string;
@@ -163,6 +165,10 @@ export default class Calendar extends Vue {
   }
   prevTimestamp(): void {
     this.calendarInstance.prev();
+  }
+
+  getEventColor(e: CalendarEventParsed): string {
+    return stringToHexColor(e.type);
   }
 
   showEvent(e: { nativeEvent: Event; event: any }): void {
