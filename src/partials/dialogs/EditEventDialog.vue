@@ -7,6 +7,7 @@
       :categories="categories"
       :scopes="scopes"
       :profiles="profiles"
+      @close="close"
       @save="onEventUpdate"
     />
   </v-dialog>
