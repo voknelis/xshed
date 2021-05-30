@@ -23,6 +23,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import UserAccounts from "@/partials/navigation/UserAccounts.vue";
+import { APP_THEME_KEY } from "@/store/localStorageKeys";
 
 @Component({
   components: { UserAccounts },
@@ -31,7 +32,7 @@ export default class Navigation extends Vue {
   toggleAppTheme(): void {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     const value = this.$vuetify.theme.dark ? "dark" : "light";
-    localStorage.setItem("xshed.app-theme", value);
+    localStorage.setItem(APP_THEME_KEY, value);
   }
 }
 </script>
