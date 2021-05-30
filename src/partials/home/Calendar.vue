@@ -3,7 +3,8 @@
     <CalendarRibbon
       v-model="view"
       class="mb-2"
-      :date="calendarTitle"
+      :date.sync="currentDate"
+      :date-string="calendarTitle"
       @to-today="toToday"
       @next-timestamp="nextTimestamp"
       @prev-timestamp="prevTimestamp"

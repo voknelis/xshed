@@ -41,9 +41,28 @@
             <v-btn class="px-0" text large color="grey darken-2" min-width="40" @click="prevTimestamp">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-toolbar-title class="mx-4" v-if="date">
-              {{ date }}
-            </v-toolbar-title>
+            <v-menu
+              v-model="dateMenu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn text v-bind="attrs" v-on="on" style="letter-spacing: normal; font-weight: normal">
+                  <v-toolbar-title class="mx-4" v-if="dateString">
+                    {{ dateString }}
+                  </v-toolbar-title>
+                </v-btn>
+              </template>
+              <v-date-picker
+                v-model="date_"
+                :active-picker="datePickerType"
+                no-title
+                scrollable
+                @input="dateMenu = false"
+              />
+            </v-menu>
             <v-btn class="px-0" text large color="grey darken-2" min-width="40" @click="nextTimestamp">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
@@ -59,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, VModel, Vue } from "vue-property-decorator";
+import { Component, Emit, Prop, PropSync, VModel, Vue } from "vue-property-decorator";
 import CalendarViewSwitcher from "@/components/home/CalendarViewSwitcher.vue";
 import { CalendarView } from "@/entities/CalendarView";
 
@@ -69,7 +88,14 @@ import { CalendarView } from "@/entities/CalendarView";
 export default class CalendarRibbon extends Vue {
   @VModel() view!: CalendarView;
 
-  @Prop() date?: string;
+  @Prop() dateString?: string;
+  @PropSync("date") date_?: string;
+
+  dateMenu = false;
+
+  get datePickerType(): "DATE" | "MONTH" | "YEAR" {
+    return this.view === "month" ? "MONTH" : "DATE";
+  }
 
   @Emit()
   nextTimestamp(): void {
