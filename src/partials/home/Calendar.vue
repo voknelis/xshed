@@ -203,7 +203,7 @@ export default class Calendar extends Vue {
   createDraftEvent(tms: CalendarDaySlotScope): void {
     if (!this.dragEvent && this.draftEvent === null) {
       const time = vuetifyTimestampToUnixTimestamp(tms);
-      const timeRounded = new Date(roundTime(time, { roundTo: this.roundMinutes }));
+      const timeRounded = new Date(roundTime(time, { roundTo: this.roundMinutes, down: true }));
 
       const profile: UserProfile = tms.category ? (tms.category as UserProfile) : root.getters.userProfile;
 
