@@ -142,11 +142,11 @@ export default class Calendar extends Vue {
   }
 
   get events(): CalendarEventParsed[] {
-    const events = root.getters.events;
     if (this.view === "month") {
-      return events;
+      return root.getters.profileEvents;
     } else {
-      const eventResults = [...events];
+      const eventResults =
+        this.view === "category" ? [...root.getters.events] : [...root.getters.profileEvents];
       if (this.dragEvent) eventResults.push(this.draftEvent as CalendarEventParsed);
       if (this.extendEvent) {
         const index = eventResults.findIndex((e) => e.id === this.extendEvent!.id);

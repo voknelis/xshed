@@ -7,6 +7,11 @@ import { toLocalDate, toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
 import { root } from "@/store";
 
 export class RootGetters extends Getters<RootState> {
+  get profileEvents(): CalendarEventParsed[] {
+    return this.state.events
+      .filter((e) => e.ProfileId === this.state.selectedProfileId)
+      .map(mapToVuetifyEvent);
+  }
   get events(): CalendarEventParsed[] {
     return this.state.events.map(mapToVuetifyEvent);
   }

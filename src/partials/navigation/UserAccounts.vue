@@ -2,8 +2,8 @@
   <v-menu offset-y>
     <template #activator="{ on, attrs }">
       <v-btn icon fab v-bind="attrs" v-on="on">
-        <v-avatar color="primary" size="40">
-          <span class="white--text text-subtitle-1">{{ userInitials(selectedProfile.Title) }}</span>
+        <v-avatar :color="currentProfile.Color" size="40">
+          <span class="white--text text-subtitle-1">{{ userInitials(currentProfile.Title) }}</span>
         </v-avatar>
       </v-btn>
     </template>
@@ -11,7 +11,7 @@
     <v-list nav>
       <v-list-item-group v-model="selectedItem" color="primary">
         <template v-for="p in userProfiles">
-          <v-list-item :key="p.Id">
+          <v-list-item :key="p.Id" @click="selectCurrentProfile(p)">
             <v-list-item-avatar>
               <v-avatar :color="p.Color" size="40">
                 <span class="white--text text-subtitle-1">{{ userInitials(p.Title) }}</span>
@@ -40,7 +40,11 @@ import { getUserInitials } from "@/utils/getUserInitials";
 
 @Component
 export default class UserAccounts extends Vue {
-  selectedItem = "";
+  selectedItem: UserProfile | null = null;
+
+  get currentProfile(): UserProfile {
+    return root.getters.userProfile;
+  }
 
   get userProfiles(): UserProfile[] {
     return root.state.profiles;
@@ -49,12 +53,21 @@ export default class UserAccounts extends Vue {
     return root.getters.userProfile;
   }
 
+  mounted() {
+    this.selectedItem = this.currentProfile;
+  }
+
   userInitials(s: string): string {
     return getUserInitials(s);
   }
 
   addProfile(): void {
     this.$dialogs.profileDialog.open();
+  }
+
+  selectCurrentProfile(p: UserProfile) {
+    this.selectedItem = p;
+    root.commit("setSelectedProfile", p.Id);
   }
 }
 </script>
