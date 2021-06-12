@@ -9,9 +9,9 @@
     <v-sheet class="pb-4">
       <v-sheet :dark="isBackgroundWhite">
         <div class="dialog-title" :style="{ backgroundColor: profile.Color }">
-          <div class="text-center text-h5">Customize your profiles</div>
+          <div class="text-center text-h5" :class="[titleTextColor]">Customize your profiles</div>
           <v-avatar class="default-avatar" size="80" :color="profile.Color">
-            <v-icon large>mdi-account</v-icon>
+            <v-icon :class="[titleTextColor]" large>mdi-account</v-icon>
           </v-avatar>
         </div>
       </v-sheet>
@@ -62,6 +62,11 @@ export default class AddProfileDialog extends Vue {
     return isColorWhite(this.profile.Color);
   }
 
+  get titleTextColor(): string {
+    const color = isColorWhite(this.profile.Color) ? "white" : "black";
+    return `${color}--text`;
+  }
+
   open(): void {
     this.dialog = true;
 
@@ -93,6 +98,7 @@ export default class AddProfileDialog extends Vue {
   align-items: center;
   justify-content: center;
   height: 150px;
+  transition: background-color 0.5s ease;
 }
 
 .default-avatar {
