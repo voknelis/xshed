@@ -190,7 +190,7 @@ export default class Calendar extends Vue {
   }
 
   getEventColor(e: CalendarEventParsed): string {
-    const hexColor = stringToHexColor(e.type);
+    const hexColor = e.type ? stringToHexColor(e.type) : "#000000";
     if (e.id === this.extendEvent?.id) {
       return `${hexColor}B3`;
     }
