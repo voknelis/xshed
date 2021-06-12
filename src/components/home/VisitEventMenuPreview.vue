@@ -6,7 +6,7 @@
       <v-spacer></v-spacer>
 
       <v-btn :dark="isBackgroundWhite" icon @click="close">
-        <v-icon>mdi-window-close</v-icon>
+        <v-icon :class="getTextColorClass">mdi-window-close</v-icon>
       </v-btn>
     </v-toolbar>
 

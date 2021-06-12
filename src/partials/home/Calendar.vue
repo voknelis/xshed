@@ -23,6 +23,7 @@
       :weekdays="weekdays"
       :events="events"
       :event-color="getEventColor"
+      :event-text-color="getTextColor"
       locale="en-US"
       :style="{ 'user-select': [this.dragEvent ? 'none' : ''] }"
       @click:interval="openNewEventDialog"
@@ -57,6 +58,7 @@
 </template>
 
 <script lang="ts">
+import { isColorWhite } from "@/utils/isColorWhite";
 import { Component, Vue } from "vue-property-decorator";
 import { CalendarDaySlotScope, CalendarTimestamp } from "vuetify";
 import CalendarRibbon from "@/components/home/CalendarRibbon.vue";
@@ -177,6 +179,7 @@ export default class Calendar extends Vue {
 
   getEventColor(e: CalendarEventParsed): string {
     return stringToHexColor(e.type);
+    // return "white"
   }
 
   showEvent(e: { nativeEvent: Event; event: any }): void {
@@ -251,6 +254,11 @@ export default class Calendar extends Vue {
 
   closeSelectedEventMenu(): void {
     this.selectedOpen = false;
+  }
+
+  getTextColor(e: CalendarEventParsed): string {
+    const backColor = e.type ? stringToHexColor(e.type) : "#222";
+    return isColorWhite(backColor) ? "white" : "black";
   }
 }
 </script>
