@@ -17,6 +17,14 @@ export class RootActions extends Actions<RootState, RootGetters, RootMutations, 
   async updateEvent(payload: CalendarEvent): Promise<void> {
     this.commit("setEvent", payload);
   }
+  async updatePartialEvent(payload: Partial<CalendarEvent>): Promise<void> {
+    const index = this.state.events.findIndex((e) => e.Id === payload.Id!);
+    if (index >= 0) {
+      const originalEvent = this.state.events[index];
+      const event = { ...originalEvent, ...payload };
+      this.commit("setEvent", event);
+    }
+  }
 
   async deleteEvent(payload: CalendarEventParsed): Promise<void> {
     this.commit("removeEvent", payload.id);
