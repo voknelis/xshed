@@ -200,8 +200,16 @@ export default class Calendar extends Vue {
   showEvent(e: { nativeEvent: Event; event: any }): void {
     const { nativeEvent, event } = e;
     const open = () => {
+      const prevSelectedEvent = this.selectedEvent;
       this.selectedEvent = event;
       this.selectedElement = nativeEvent.target;
+
+      if (prevSelectedEvent?.id === this.selectedEvent?.id) {
+        this.$dialogs.editEventDialog.open(this.selectedEvent);
+        this.selectedOpen = false;
+        return;
+      }
+
       setTimeout(() => {
         this.selectedOpen = true;
       }, 10);
