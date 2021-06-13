@@ -90,7 +90,7 @@ export default class SettingsSessionManagement extends Vue {
 </script>
 
 <style lang="sass">
-@import "~vuetify/src/styles/settings/colors"
+@import "node_modules/vuetify/src/styles/settings/colors"
 
 .settings-session-management.theme--light
   background-color: map-get($grey, lighten-5)
