@@ -19,6 +19,7 @@
       <div class="d-flex flex-column mt-16 mx-4">
         <v-text-field
           v-model="profile.Title"
+          ref="titleTextField"
           filled
           autofocus
           placeholder="Add a name or a label like Work or Personal"
@@ -71,6 +72,12 @@ export default class AddProfileDialog extends Vue {
     this.dialog = true;
 
     this.profile = this.getDefaultProfile();
+
+    this.$nextTick(() => {
+      this.$nextTick(() => {
+        this.$refs.titleTextField.$el.focus();
+      });
+    });
   }
 
   getDefaultProfile(): Omit<UserProfile, "Id"> {
