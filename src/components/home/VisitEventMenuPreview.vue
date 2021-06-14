@@ -60,8 +60,9 @@ export default class VisitEventMenuPreview extends Vue {
     return isColorWhite(this.getEventColor);
   }
 
+  @Emit()
   openEditDialog(e: CalendarEventParsed): void {
-    this.$dialogs.editEventDialog.open(e);
+    return e;
   }
 
   async deleteVisitEvent(e: CalendarEventParsed): Promise<void> {

@@ -56,9 +56,16 @@
       offset-x
     >
       <template v-if="selectedEvent">
-        <VisitEventMenuPreview :visit="selectedEvent" @close="closeSelectedEventMenu" />
+        <VisitEventMenuPreview
+          :visit="selectedEvent"
+          @close="closeSelectedEventMenu"
+          @open-edit-dialog="openEditEventDialog"
+        />
       </template>
     </v-menu>
+
+    <NewEventDialog ref="newEventDialog" />
+    <EditEventDialog ref="editEventDialog" />
   </div>
 </template>
 
@@ -68,6 +75,8 @@ import VisitEventMenuPreview from "@/components/home/VisitEventMenuPreview.vue";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { CalendarView } from "@/entities/CalendarView";
 import { UserProfile } from "@/entities/UserProfile";
+import EditEventDialog from "@/partials/dialogs/EditEventDialog.vue";
+import NewEventDialog from "@/partials/dialogs/NewEventDialog.vue";
 import { root } from "@/store";
 import { isColorWhite } from "@/utils/isColorWhite";
 import { roundTime } from "@/utils/roundTime";
@@ -89,7 +98,7 @@ type VCalendar = Vue & {
 };
 
 @Component({
-  components: { CalendarRibbon, VisitEventMenuPreview },
+  components: { CalendarRibbon, VisitEventMenuPreview, NewEventDialog, EditEventDialog },
 })
 export default class Calendar extends Vue {
   view: CalendarView = "day";
@@ -219,7 +228,7 @@ export default class Calendar extends Vue {
         prevSelectedEvent?.id === this.selectedEvent?.id &&
         this.selectedEventLastClick - prevSelectedEventLastClick <= 700
       ) {
-        this.$dialogs.editEventDialog.open(this.selectedEvent);
+        this.openEditEventDialog(this.selectedEvent);
         this.selectedOpen = false;
         return;
       }
@@ -335,7 +344,11 @@ export default class Calendar extends Vue {
   }
 
   openNewEventDialog(event?: Partial<CalendarEventParsed> | CalendarDaySlotScope): void {
-    this.$dialogs.newEventDialog.open(event);
+    (this.$refs.newEventDialog as NewEventDialog).open(event);
+  }
+
+  openEditEventDialog(event: CalendarEventParsed): void {
+    (this.$refs.editEventDialog as EditEventDialog).open(event);
   }
 
   closeSelectedEventMenu(): void {

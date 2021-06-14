@@ -15,20 +15,27 @@
         <v-icon>mdi-cog</v-icon>
       </v-btn>
 
-      <UserAccounts />
+      <UserAccounts @add-profile="openProfileDialog" />
     </div>
+
+    <AddProfileDialog ref="addProfileDialog" />
   </v-app-bar>
 </template>
 
 <script lang="ts">
+import AddProfileDialog from "@/partials/dialogs/AddProfileDialog.vue";
 import { Component, Vue } from "vue-property-decorator";
 import UserAccounts from "@/partials/navigation/UserAccounts.vue";
 import { APP_THEME_KEY } from "@/store/localStorageKeys";
 
 @Component({
-  components: { UserAccounts },
+  components: { AddProfileDialog, UserAccounts },
 })
 export default class Navigation extends Vue {
+  openProfileDialog(): void {
+    (this.$refs.addProfileDialog as AddProfileDialog).open();
+  }
+
   toggleAppTheme(): void {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     const value = this.$vuetify.theme.dark ? "dark" : "light";

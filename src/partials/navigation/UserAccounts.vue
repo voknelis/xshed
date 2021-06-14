@@ -33,12 +33,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Emit, Vue } from "vue-property-decorator";
+import AddProfileDialog from "@/partials/dialogs/AddProfileDialog.vue";
 import { UserProfile } from "@/entities/UserProfile";
 import { root } from "@/store";
 import { getUserInitials } from "@/utils/getUserInitials";
 
-@Component
+@Component({
+  components: { AddProfileDialog },
+})
 export default class UserAccounts extends Vue {
   selectedItem: UserProfile | null = null;
 
@@ -53,7 +56,7 @@ export default class UserAccounts extends Vue {
     return root.getters.userProfile;
   }
 
-  mounted() {
+  mounted(): void {
     this.selectedItem = this.currentProfile;
   }
 
@@ -61,8 +64,9 @@ export default class UserAccounts extends Vue {
     return getUserInitials(s);
   }
 
+  @Emit()
   addProfile(): void {
-    this.$dialogs.profileDialog.open();
+    return;
   }
 
   selectCurrentProfile(p: UserProfile) {
