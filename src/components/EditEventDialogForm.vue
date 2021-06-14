@@ -60,6 +60,7 @@
           <v-row>
             <v-col>
               <v-combobox
+                ref="categoryCombobox"
                 label="Category"
                 prepend-icon="mdi-tune-variant"
                 :items="categories"
@@ -69,6 +70,7 @@
             </v-col>
             <v-col>
               <v-combobox
+                ref="scopeCombobox"
                 label="Scope"
                 prepend-icon="mdi-tune"
                 :items="scopes"
@@ -165,6 +167,11 @@ export default class EditEventDialogForm extends Vue {
     const endHours = "20:00";
     const interval = 15;
     return getTimeStringRange(startHours, endHours, interval);
+  }
+
+  mounted(): void {
+    this.$refs.categoryCombobox.setValue(this.category);
+    this.$refs.scopeCombobox.setValue(this.scope);
   }
 
   formatDate(date: string | null): string {
