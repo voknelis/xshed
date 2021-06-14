@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="model" :fullscreen="fullscreenModal" max-width="700px">
-    <NewEvent
+    <NewEventDialogForm
       v-if="model"
       :timestamp="timestamp"
       :event="event"
@@ -17,14 +17,14 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { CalendarDaySlotScope } from "vuetify";
-import NewEvent from "@/components/NewEvent.vue";
+import NewEventDialogForm from "@/components/NewEventDialogForm.vue";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
 import { root } from "@/store";
 
 @Component({
-  components: { NewEvent },
+  components: { NewEventDialogForm },
 })
 export default class NewEventDialog extends Vue {
   model = false;

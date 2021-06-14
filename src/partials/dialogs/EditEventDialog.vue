@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="model" :fullscreen="fullscreenModal" max-width="700px">
-    <EditEvent
+    <EditEventDialogForm
       v-if="model && event"
       :event="event"
       :loading="loading"
@@ -15,14 +15,14 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import EditEvent from "@/components/EditEvent.vue";
+import EditEventDialogForm from "@/components/EditEventDialogForm.vue";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
 import { root } from "@/store";
 
 @Component({
-  components: { EditEvent },
+  components: { EditEventDialogForm },
 })
 export default class EditEventDialog extends Vue {
   model = false;

@@ -1,18 +1,18 @@
 <template>
   <v-card>
-    <v-card-title>Create visit event</v-card-title>
+    <v-card-title>Edit event</v-card-title>
     <v-card-text>
       <v-container>
-        <v-form v-model="formModel" ref="form" lazy-validation>
+        <v-form v-model="formModel" ref="form">
           <v-row>
             <v-col>
               <v-menu
-                ref="menu"
                 v-model="menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
+                ref="menu"
                 offset-y
                 min-width="auto"
+                transition="scale-transition"
+                :close-on-content-click="false"
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
@@ -41,18 +41,18 @@
             <v-col>
               <v-autocomplete
                 v-model="startTime"
-                :items="visitTimeItems"
-                prepend-icon="mdi-clock-time-two-outline"
                 label="Start time"
+                prepend-icon="mdi-clock-time-two-outline"
+                :items="visitTimeItems"
               />
             </v-col>
             <v-col>
               <v-autocomplete
                 v-model="endTime"
+                label="End time"
+                prepend-icon="mdi-clock-time-five-outline"
                 :items="visitTimeItems"
                 :rules="[(v) => v > startTime || 'End time should be greater than Start time']"
-                prepend-icon="mdi-clock-time-five-outline"
-                label="End time"
               ></v-autocomplete>
             </v-col>
           </v-row>
@@ -60,15 +60,20 @@
           <v-row>
             <v-col>
               <v-combobox
-                v-model="category"
-                :rules="validation.category"
-                :items="categories"
-                prepend-icon="mdi-tune-variant"
                 label="Category"
+                prepend-icon="mdi-tune-variant"
+                :items="categories"
+                :rules="validation.category"
+                @update:search-input="updateComboboxInput('category', $event)"
               ></v-combobox>
             </v-col>
             <v-col>
-              <v-combobox v-model="scope" :items="scopes" prepend-icon="mdi-tune" label="Scope"></v-combobox>
+              <v-combobox
+                label="Scope"
+                prepend-icon="mdi-tune"
+                :items="scopes"
+                @update:search-input="updateComboboxInput('scope', $event)"
+              ></v-combobox>
             </v-col>
           </v-row>
 
@@ -76,11 +81,11 @@
             <v-col>
               <v-autocomplete
                 v-model="profile"
-                :items="profiles"
                 item-text="Title"
-                return-object
-                prepend-icon="mdi-account"
                 label="Profile"
+                prepend-icon="mdi-account"
+                return-object
+                :items="profiles"
               />
             </v-col>
           </v-row>
@@ -104,52 +109,47 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="blue" text @click="closeDialog">Close</v-btn>
-      <v-btn color="primary" :disabled="!formModel" :loading="loading" @click="save">Create</v-btn>
+      <v-btn color="primary" :disabled="!formModel" :loading="loading" @click="save">Submit</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
-import { CalendarDaySlotScope } from "vuetify";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
 import { root } from "@/store";
 import { requiredRule } from "@/utils/formValidationRules";
-import { addMinutes, getTimeStringRange } from "@/utils/getRangeTimeItems";
-import { toLocalISODateTime } from "@/utils/toVuetifyDateTime";
-import { uuidv4 } from "@/utils/uuidv4";
+import { getTimeStringRange } from "@/utils/getRangeTimeItems";
 
 type VForm = { validate: () => boolean };
 
 @Component
-export default class NewEvent extends Vue {
-  formModel = false;
-  menu = false;
-
-  startDate = this.getLocalISODate();
-  startDateFormatted = this.formatDate(this.getLocalISODate());
-  startTime = "";
-  endTime = "";
-  allDay = false;
-  profile: UserProfile = root.getters.userProfile;
-  category? = "";
-  scope? = "";
-  comment? = "";
-
-  validation = {
-    category: [requiredRule("Category")],
-  };
-
-  /* Initial timestamp */
-  @Prop({ required: false, type: Object }) timestamp?: CalendarDaySlotScope;
-  @Prop({ required: false, type: Object }) event?: Partial<CalendarEventParsed>;
+export default class EditEventDialogForm extends Vue {
+  @Prop({ required: false, type: Object }) event!: CalendarEventParsed;
   @Prop({ required: false, type: Array }) categories!: string[];
   @Prop({ required: false, type: Array }) scopes!: string[];
   @Prop({ required: false, type: Array }) profiles!: UserProfile[];
   @Prop({ type: Boolean }) loading!: boolean;
   @Prop({ type: Boolean }) isAdmin!: boolean;
+
+  formModel = false;
+  menu = false;
+
+  startDate = this.getDateString(this.event.start);
+  startDateFormatted = this.formatDate(this.startDate);
+  startTime = this.getTimeString(this.event.start);
+  endTime = this.getTimeString(this.event.end || "");
+  allDay = this.event.allDay;
+  category = this.event.type || "";
+  scope = this.event.scope || "";
+  comment = this.event.comment || "";
+  profile: UserProfile = root.getters.userProfileByTitle(this.event.category);
+
+  validation = {
+    category: [requiredRule("Category")],
+  };
 
   @Watch("startDate")
   startDateUpdate(): void {
@@ -181,52 +181,12 @@ export default class NewEvent extends Vue {
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   }
 
-  created(): void {
-    const currentDate = new Date();
+  getDateString(d: string): string {
+    return d.substr(0, 10);
+  }
 
-    const toLocaleString = (n: number) => {
-      return n.toLocaleString("default", { minimumIntegerDigits: 2 });
-    };
-    const interval = 15;
-
-    if (this.timestamp) {
-      this.startDate = this.timestamp.date;
-
-      this.startTime = `${toLocaleString(this.timestamp.hour)}:00`;
-      const end = addMinutes(
-        new Date(`${this.startDate} ${toLocaleString(this.timestamp.hour)}:00`),
-        interval,
-      );
-      this.endTime = `${toLocaleString(end.getHours())}:${toLocaleString(end.getMinutes())}`;
-      return;
-    }
-    if (this.event) {
-      const [startDate, startTime] = this.event.start!.split(" ");
-      this.startDate = startDate;
-      this.startTime = startTime;
-
-      const [_, endTime] = this.event.end!.split(" ");
-      this.endTime = endTime;
-
-      this.category = this.event.type;
-      this.scope = this.event.scope;
-      this.comment = this.event.comment;
-
-      if (this.event.category) {
-        this.profile = root.getters.userProfileByTitle(this.event.category);
-      }
-
-      return;
-    }
-
-    this.startDate = currentDate.toISOString().substr(0, 10);
-
-    this.startTime = `${toLocaleString(currentDate.getHours())}:00`;
-    const end = addMinutes(
-      new Date(`${this.startDate} ${toLocaleString(currentDate.getHours())}:00`),
-      interval,
-    );
-    this.endTime = `${toLocaleString(end.getHours())}:${toLocaleString(end.getMinutes())}`;
+  getTimeString(d: string): string {
+    return d.substr(11, 5);
   }
 
   makeDateTime(date: string, time: string): string {
@@ -245,20 +205,23 @@ export default class NewEvent extends Vue {
     const startTime = this.allDay ? "00:00" : this.startTime;
     const endTime = this.allDay ? "23:59" : this.endTime;
     return {
-      Id: uuidv4(),
+      Id: this.event.id,
       Start: this.makeDateTime(this.startDate, startTime),
       End: this.makeDateTime(this.startDate, endTime),
       AllDay: this.allDay,
-      Category: this.category!,
+      Category: this.category,
       Scope: this.scope,
       Comment: this.comment,
       ProfileId: this.profile?.Id,
     };
   }
 
-  getLocalISODate(): string {
-    const localISODate = toLocalISODateTime(new Date());
-    return localISODate.substr(0, 10);
+  /**
+   * This method used to implement v-combobox validation on change.
+   * See https://github.com/vuetifyjs/vuetify/issues/4679 for more information.
+   */
+  updateComboboxInput(prop: string, value: string): void {
+    this[prop] = value;
   }
 }
 </script>
