@@ -25,11 +25,11 @@
       :event-color="getEventColor"
       :event-text-color="getTextColor"
       locale="en-US"
-      :style="{ 'user-select': [this.dragEvent ? 'none' : ''] }"
+      :style="{ 'user-select': [this.isDragEvent ? 'none' : ''] }"
       @click:interval="openNewEventDialog"
       @click:event="showEvent"
       @click:date="setViewDay"
-      @mousedown:event="mouseDownExistEvent"
+      @mousedown:event="dragExistEvent"
       @mousedown:time="createDraftEvent"
       @mousemove:time="updateDraftEvent"
       @mouseup:time="endDraftEvent"
@@ -103,9 +103,11 @@ export default class Calendar extends Vue {
   selectedEventLastClick: Date | null = null;
   selectedElement: EventTarget | null = null;
 
-  dragEvent = false;
+  isDragEvent = false;
   draftEvent: Partial<CalendarEventParsed> | null = null;
   extendEvent: CalendarEventParsed | null = null;
+  dragEvent: CalendarEventParsed | null = null;
+  dragTime: number | null = null;
 
   selectedOpen = false;
 
@@ -148,10 +150,16 @@ export default class Calendar extends Vue {
     } else {
       const eventResults =
         this.view === "category" ? [...root.getters.events] : [...root.getters.profileEvents];
-      if (this.dragEvent) eventResults.push(this.draftEvent as CalendarEventParsed);
+      if (this.draftEvent) {
+        eventResults.push(this.draftEvent as CalendarEventParsed);
+      }
       if (this.extendEvent) {
         const index = eventResults.findIndex((e) => e.id === this.extendEvent!.id);
         index >= 0 && Vue.set(eventResults, index, this.extendEvent);
+      }
+      if (this.dragEvent) {
+        const index = eventResults.findIndex((e) => e.id === this.dragEvent!.id);
+        index >= 0 && Vue.set(eventResults, index, this.dragEvent);
       }
       return eventResults;
     }
@@ -192,7 +200,7 @@ export default class Calendar extends Vue {
 
   getEventColor(e: CalendarEventParsed): string {
     const hexColor = e.type ? stringToHexColor(e.type) : "#000000";
-    if (e.id === this.extendEvent?.id) {
+    if (e.id === this.extendEvent?.id || e.id === this.dragEvent?.id) {
       return `${hexColor}B3`;
     }
     return hexColor;
@@ -229,18 +237,23 @@ export default class Calendar extends Vue {
     }
   }
 
-  mouseDownExistEvent({ nativeEvent }: { nativeEvent: Event }): void {
-    nativeEvent.stopPropagation();
+  dragExistEvent(e: { nativeEvent: Event; event: CalendarEventParsed }): void {
+    this.isDragEvent = true;
+    this.dragEvent = { ...e.event };
   }
 
   createDraftEvent(tms: CalendarDaySlotScope): void {
-    if (!this.dragEvent && this.draftEvent === null) {
-      const time = vuetifyTimestampToUnixTimestamp(tms);
+    const time = vuetifyTimestampToUnixTimestamp(tms);
+    if (this.dragEvent && !this.dragTime) {
+      const start = new Date(this.dragEvent.start).getTime();
+      this.dragTime = time - start;
+    }
+    if (!this.isDragEvent && this.draftEvent === null) {
       const timeRounded = new Date(roundTime(time, { roundTo: this.roundMinutes, down: true }));
 
       const profile: UserProfile = tms.category ? (tms.category as UserProfile) : root.getters.userProfile;
 
-      this.dragEvent = true;
+      this.isDragEvent = true;
       this.draftEvent = {
         name: `#Draft event`,
         start: toVuetifyDateTime(timeRounded),
@@ -254,7 +267,7 @@ export default class Calendar extends Vue {
     const time = vuetifyTimestampToUnixTimestamp(tms);
     const timeRounded = new Date(roundTime(time, { roundTo: this.roundMinutes }));
 
-    if (this.dragEvent && this.draftEvent !== null) {
+    if (this.isDragEvent && this.draftEvent !== null) {
       // do not spread event to any other day
       const startTime = new Date(this.draftEvent.start as string);
       startTime.setHours(timeRounded.getHours());
@@ -267,11 +280,22 @@ export default class Calendar extends Vue {
       startTime.setMinutes(timeRounded.getMinutes());
 
       this.extendEvent.end = toVuetifyDateTime(startTime);
+    } else if (this.dragEvent && this.dragTime) {
+      const start = new Date(this.dragEvent.start);
+      const end = new Date(this.dragEvent.end);
+      const duration = end - start;
+
+      const newStartTime = time - this.dragTime;
+      const newStart = roundTime(newStartTime, { roundTo: this.roundMinutes });
+      const newEnd = newStart + duration;
+
+      this.dragEvent.start = toVuetifyDateTime(new Date(newStart));
+      this.dragEvent.end = toVuetifyDateTime(new Date(newEnd));
     }
   }
 
   async endDraftEvent(): Promise<void> {
-    this.dragEvent = false;
+    this.isDragEvent = false;
     if (this.draftEvent) {
       this.openNewEventDialog(this.draftEvent);
       this.draftEvent = null;
@@ -281,12 +305,29 @@ export default class Calendar extends Vue {
       this.extendEvent = null;
       await root.actions.updatePartialEvent({ Id: extendEvent.id, End: extendEvent.end });
     }
+    if (this.dragEvent) {
+      const dragEvent = this.dragEvent;
+      this.dragEvent = null;
+      this.dragTime = null;
+
+      const index = root.getters.events.findIndex((e) => e.id === dragEvent.id);
+      if (index >= 0) {
+        const e = root.getters.events[index];
+        // update only changed events
+        if (e.start !== dragEvent.start && e.end !== dragEvent.end) {
+          const updatedEvent = { Id: dragEvent.id, Start: dragEvent.start, End: dragEvent.end };
+          await root.actions.updatePartialEvent(updatedEvent);
+        }
+      }
+    }
   }
 
   cancelDrag(): void {
-    this.dragEvent = false;
+    this.isDragEvent = false;
     this.draftEvent = null;
     this.extendEvent = null;
+    this.dragEvent = null;
+    this.dragTime = null;
   }
 
   extendEventBottom(event: CalendarEventParsed): void {
