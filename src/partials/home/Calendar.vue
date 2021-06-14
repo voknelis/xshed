@@ -100,6 +100,7 @@ export default class Calendar extends Vue {
   roundMinutes = 15;
 
   selectedEvent: CalendarEventParsed | null = null;
+  selectedEventLastClick: Date | null = null;
   selectedElement: EventTarget | null = null;
 
   dragEvent = false;
@@ -200,11 +201,16 @@ export default class Calendar extends Vue {
   showEvent(e: { nativeEvent: Event; event: any }): void {
     const { nativeEvent, event } = e;
     const open = () => {
+      const prevSelectedEventLastClick: Date = this.selectedEventLastClick ?? new Date(null);
       const prevSelectedEvent = this.selectedEvent;
       this.selectedEvent = event;
+      this.selectedEventLastClick = new Date();
       this.selectedElement = nativeEvent.target;
 
-      if (prevSelectedEvent?.id === this.selectedEvent?.id) {
+      if (
+        prevSelectedEvent?.id === this.selectedEvent?.id &&
+        this.selectedEventLastClick - prevSelectedEventLastClick <= 700
+      ) {
         this.$dialogs.editEventDialog.open(this.selectedEvent);
         this.selectedOpen = false;
         return;
