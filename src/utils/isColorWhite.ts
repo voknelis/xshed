@@ -1,7 +1,7 @@
 // @ts-ignore
-import { fromHex } from "vuetify/es5/components/VColorPicker/util";
+import { fromHex } from "vuetify/lib/components/VColorPicker/util";
 // @ts-ignore
-import { contrastRatio } from "vuetify/es5/util/colorUtils";
+import { contrastRatio } from "vuetify/lib/util/colorUtils";
 
 const white = fromHex("#FFFFFF").rgba;
 

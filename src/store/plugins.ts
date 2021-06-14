@@ -8,6 +8,6 @@ const localStoragePlugin: (store: Store<RootState>) => void = (store) => {
   });
 };
 
-export default process.env.NODE_ENV !== "production"
+export default import.meta.env.NODE_ENV !== "production"
   ? [createLogger(), localStoragePlugin]
   : [localStoragePlugin];
