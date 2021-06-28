@@ -60,7 +60,7 @@
           <v-row>
             <v-col>
               <v-combobox
-                autofocus
+                ref="categoryCombobox"
                 label="Category"
                 prepend-icon="mdi-tune-variant"
                 :items="categories"
@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Prop, Ref, Vue, Watch } from "vue-property-decorator";
 import { CalendarDaySlotScope } from "vuetify";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
@@ -130,6 +130,7 @@ import { toLocalISODateTime } from "@/utils/toVuetifyDateTime";
 import { uuidv4 } from "@/utils/uuidv4";
 
 type VForm = { validate: () => boolean };
+type VCombobox = { focus: () => void };
 
 @Component
 export default class NewEventDialogForm extends Vue {
@@ -163,6 +164,8 @@ export default class NewEventDialogForm extends Vue {
   startDateUpdate(): void {
     this.startDateFormatted = this.formatDate(this.startDate);
   }
+
+  @Ref("categoryCombobox") categoryCombobox!: VCombobox;
 
   get form(): VForm {
     return this.$refs.form as unknown as VForm;
@@ -235,6 +238,17 @@ export default class NewEventDialogForm extends Vue {
       interval,
     );
     this.endTime = `${toLocaleString(end.getHours())}:${toLocaleString(end.getMinutes())}`;
+  }
+
+  mounted(): void {
+    this.focusCategoryCombobox();
+  }
+
+  focusCategoryCombobox(): void {
+    // the only one way to consistently autofocus element
+    // by default, the elements gets autofocused with the first modal opening
+    // see: https://stackoverflow.com/questions/51472947/vuetifys-autofocus-works-only-on-first-modal-open
+    setTimeout(() => this.categoryCombobox.focus());
   }
 
   makeDateTime(date: string, time: string): string {
