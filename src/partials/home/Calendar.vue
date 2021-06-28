@@ -78,6 +78,7 @@ import { UserProfile } from "@/entities/UserProfile";
 import EditEventDialog from "@/partials/dialogs/EditEventDialog.vue";
 import NewEventDialog from "@/partials/dialogs/NewEventDialog.vue";
 import { root } from "@/store";
+import { CALENDAR_VIEW_KEY } from "@/store/localStorageKeys";
 import { isColorWhite } from "@/utils/isColorWhite";
 import { roundTime } from "@/utils/roundTime";
 import { stringToHexColor } from "@/utils/stringToHexColor";
@@ -196,6 +197,7 @@ export default class Calendar extends Vue {
   setViewDay({ date }: { date: string }): void {
     this.currentDate = date;
     this.view = "day";
+    localStorage.setItem(CALENDAR_VIEW_KEY, this.view);
   }
 
   nextTimestamp(): void {
