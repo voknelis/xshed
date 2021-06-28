@@ -166,10 +166,7 @@ export default class NewEventDialogForm extends Vue {
   }
 
   @Ref("categoryCombobox") categoryCombobox!: VCombobox;
-
-  get form(): VForm {
-    return this.$refs.form as unknown as VForm;
-  }
+  @Ref("form") form!: VForm;
 
   get visitTimeItems(): string[] {
     const startHours = "7:00";

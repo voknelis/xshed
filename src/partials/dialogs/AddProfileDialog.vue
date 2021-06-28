@@ -48,16 +48,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import { UserProfile } from "@/entities/UserProfile";
 import { root } from "@/store";
 import { isColorWhite } from "@/utils/isColorWhite";
+
+type VFormItem = { focus(value: string): void };
 
 @Component
 export default class AddProfileDialog extends Vue {
   dialog = false;
 
   profile = this.getDefaultProfile();
+
+  @Ref("titleTextField") titleTextField!: VFormItem;
 
   get isBackgroundWhite(): boolean {
     return isColorWhite(this.profile.Color);
@@ -73,11 +77,7 @@ export default class AddProfileDialog extends Vue {
 
     this.profile = this.getDefaultProfile();
 
-    this.$nextTick(() => {
-      this.$nextTick(() => {
-        this.$refs.titleTextField.$el.focus();
-      });
-    });
+    setTimeout(() => this.titleTextField.focus());
   }
 
   getDefaultProfile(): Omit<UserProfile, "Id"> {

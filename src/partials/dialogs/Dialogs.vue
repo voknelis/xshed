@@ -5,15 +5,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import ConfirmDialog from "./ConfirmDialog.vue";
 
 @Component({
   components: { ConfirmDialog },
 })
 export default class Dialogs extends Vue {
+  @Ref("confirmDialog") confirmDialog!: ConfirmDialog;
+
   mounted(): void {
-    this.$dialogs.confirm = this.$refs.confirmDialog as ConfirmDialog;
+    this.$dialogs.confirm = this.confirmDialog;
   }
 }
 </script>

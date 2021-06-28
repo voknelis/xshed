@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import AddProfileDialog from "@/partials/dialogs/AddProfileDialog.vue";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import UserAccounts from "@/partials/navigation/UserAccounts.vue";
 import { APP_THEME_KEY } from "@/store/localStorageKeys";
 
@@ -32,8 +32,10 @@ import { APP_THEME_KEY } from "@/store/localStorageKeys";
   components: { AddProfileDialog, UserAccounts },
 })
 export default class Navigation extends Vue {
+  @Ref("addProfileDialog") addProfileDialog!: AddProfileDialog;
+
   openProfileDialog(): void {
-    (this.$refs.addProfileDialog as AddProfileDialog).open();
+    this.addProfileDialog.open();
   }
 
   toggleAppTheme(): void {

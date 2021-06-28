@@ -117,7 +117,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Prop, Ref, Vue, Watch } from "vue-property-decorator";
 import { CalendarEvent } from "@/entities/CalendarEvent";
 import { CalendarEventParsed } from "@/entities/CalendarParsedEvent";
 import { UserProfile } from "@/entities/UserProfile";
@@ -126,6 +126,7 @@ import { requiredRule } from "@/utils/formValidationRules";
 import { getTimeStringRange } from "@/utils/getRangeTimeItems";
 
 type VForm = { validate: () => boolean };
+type VFormItem = { setValue(value: string): void };
 
 @Component
 export default class EditEventDialogForm extends Vue {
@@ -153,13 +154,13 @@ export default class EditEventDialogForm extends Vue {
     category: [requiredRule("Category")],
   };
 
+  @Ref("form") form!: VForm;
+  @Ref("categoryCombobox") categoryCombobox: VFormItem;
+  @Ref("scopeCombobox") scopeCombobox: VFormItem;
+
   @Watch("startDate")
   startDateUpdate(): void {
     this.startDateFormatted = this.formatDate(this.startDate);
-  }
-
-  get form(): VForm {
-    return this.$refs.form as unknown as VForm;
   }
 
   get visitTimeItems(): string[] {
@@ -170,8 +171,8 @@ export default class EditEventDialogForm extends Vue {
   }
 
   mounted(): void {
-    this.$refs.categoryCombobox.setValue(this.category);
-    this.$refs.scopeCombobox.setValue(this.scope);
+    this.categoryCombobox.setValue(this.category);
+    this.scopeCombobox.setValue(this.scope);
   }
 
   formatDate(date: string | null): string {

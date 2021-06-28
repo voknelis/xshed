@@ -83,7 +83,7 @@ import { roundTime } from "@/utils/roundTime";
 import { stringToHexColor } from "@/utils/stringToHexColor";
 import { toVuetifyDateTime } from "@/utils/toVuetifyDateTime";
 import { vuetifyTimestampToUnixTimestamp } from "@/utils/vuetifyTimestampToUnixTimestamp";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import { CalendarDaySlotScope, CalendarTimestamp } from "vuetify";
 
 type VCalendar = Vue & {
@@ -119,9 +119,9 @@ export default class Calendar extends Vue {
 
   selectedOpen = false;
 
-  get calendarInstance(): VCalendar {
-    return this.$refs.calendar as VCalendar;
-  }
+  @Ref("calendar") calendarInstance!: VCalendar;
+  @Ref("newEventDialog") newEventDialog!: NewEventDialog;
+  @Ref("editEventDialog") editEventDialog!: EditEventDialog;
 
   get calendarTitle(): string {
     if (!this.calendarReady) {
@@ -341,11 +341,11 @@ export default class Calendar extends Vue {
   }
 
   openNewEventDialog(event?: Partial<CalendarEventParsed> | CalendarDaySlotScope): void {
-    (this.$refs.newEventDialog as NewEventDialog).open(event);
+    this.newEventDialog.open(event);
   }
 
   openEditEventDialog(event: CalendarEventParsed): void {
-    (this.$refs.editEventDialog as EditEventDialog).open(event);
+    this.editEventDialog.open(event);
   }
 
   closeSelectedEventMenu(): void {
