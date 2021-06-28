@@ -228,15 +228,24 @@ export default class Calendar extends Vue {
 
     if (this.selectedOpen) {
       this.selectedOpen = false;
-      setTimeout(open);
+      this.$nextTick(open);
     } else {
       open();
     }
   }
 
   dragExistEvent(e: { nativeEvent: Event; event: CalendarEventParsed }): void {
-    this.isDragEvent = true;
-    this.dragEvent = { ...e.event };
+    const mouseEvent = e.nativeEvent as MouseEvent;
+    const rightClickCode = 2;
+
+    // drag event only on right click
+    if (mouseEvent.button === rightClickCode) {
+      this.isDragEvent = true;
+      this.dragEvent = { ...e.event };
+    } else {
+      // prevent opening the form and creating new event
+      mouseEvent.stopPropagation();
+    }
   }
 
   createDraftEvent(tms: CalendarDaySlotScope): void {
